@@ -325,11 +325,7 @@ class Header extends Component {
         <TechLines bottomPage={this.props.bottomPage} updateDash={this.props.updateDash} updateDashY={this.props.updateDashY} width={this.props.width} />
         <div className="header-container">
           <h1>Christian Garza</h1>
-          {/* <h2>Hello, I'm a Front-End Developer who aims for responsive websites.</h2> */}
           <h2>Hello, I'm a Front-End Developer who is always looking to learn and improve. Feel free to<br/>learn more below.</h2>
-          {/* <h2>Hello, I'm a Front-End Developer who is always looking to learn and improve.</h2> */}
-          {/* <h2>Feel free to learn more below.</h2> */}
-          {/* <h2>A front-end portfolio. This is just filler text to show how much can actually be fit into here. Your mileage may vary.</h2> */}
           <div className="next-section" onClick={(e) => this.handleClick(e, elTop, this.props.about.getBoundingClientRect().top - 60, 850)}><i className="fas fa-chevron-down"></i></div>
         </div>
       </header>
