@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {flare: 0, reverse: false, initial: true, contactBottom: 0, dash: 0, pathY: 0, width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth, height: 0};
+    this.state = {numOfStars: 250, initial: true, contactBottom: 0, dash: 0, pathY: 0, width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth, height: 0};
     this.getPageBottom = this.getPageBottom.bind(this);
     this.updateDash = this.updateDash.bind(this);
     this.updateDashY = this.updateDashY.bind(this);
@@ -11,7 +11,6 @@ class App extends Component {
     this.canvasStars = this.canvasStars.bind(this);
     this.canvasTwinkle = this.canvasTwinkle.bind(this);
     this.canvasDraw = this.canvasDraw.bind(this);
-    this.animateSun = this.animateSun.bind(this);
     this.contactRef = React.createRef();
     this.canvas = React.createRef();
     this.aboutRef = React.createRef();
@@ -51,18 +50,35 @@ class App extends Component {
     this.setState({height: Math.max(document.documentElement.clientHeight, window.innerHeight || 0)});
     let ctx = this.canvas.current.getContext("2d");
     ctx.canvas.width = this.state.width - 17;
-    ctx.canvas.height = this.state.contactBottom - 1200;
-    ctx.translate(this.state.width / 2, (this.state.contactBottom - 1200) / 2);
+    ctx.canvas.height = this.state.height;
+    ctx.translate(this.state.width / 2, ctx.canvas.height / 2);
     this.start = Date.now();
     this.canvasStars();
     requestAnimationFrame(() => {this.canvasDraw()});
   }
   componentDidUpdate(prevProps, prevState) {
-    if(prevState.width !== this.state.width || prevState.contactBottom === 0) {
+    if(this.state.width > 1300 && this.state.numOfStars !== 225) {
+      this.setState({numOfStars: 225});
+    }
+    if(this.state.width > 800 && this.state.width <= 1300 && this.state.numOfStars !== 120) {
+      this.setState({numOfStars: 120});
+    }
+    if(this.state.width > 400 && this.state.width <= 800 && this.state.numOfStars !== 80) {
+      this.setState({numOfStars: 80});
+    }
+    if(this.state.width <= 400 && this.state.numOfStars !== 50) {
+      this.setState({numOfStars: 50});
+    }
+    if((prevState.width !== this.state.width || prevState.contactBottom === 0) || (prevState.height !== this.state.height && this.state.height >= 300)) {
       let ctx = this.canvas.current.getContext("2d");
       ctx.canvas.width = this.state.width - 17;
-      ctx.canvas.height = this.state.contactBottom - 1200;
-      ctx.translate(this.state.width / 2, (this.state.contactBottom - 1200) / 2);
+      if(this.state.height <= 300) {
+        ctx.canvas.height = 300;
+      }
+      else {
+        ctx.canvas.height = this.state.height;
+      }
+      ctx.translate(this.state.width / 2, ctx.canvas.height / 2);
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {this.canvasStars()}, 100);
     }
@@ -73,7 +89,7 @@ class App extends Component {
     let ctx = canvas.getContext("2d");
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    for(let i = 0; i < 550; i++) {
+    for(let i = 0; i < this.state.numOfStars; i++) {
       if(this.state.initial) {
         this.starArray.push({x: Math.floor(Math.random() * ctx.canvas.width), y: Math.floor(Math.random() * ctx.canvas.height), size: Math.floor(Math.random() * 4) + 3, alpha: Math.random(), dir: Math.random() >= 0.5});
       }
@@ -99,7 +115,7 @@ class App extends Component {
     let ease = 0.04;
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    for(let i = 0; i < 550; i++) {
+    for(let i = 0; i < this.state.numOfStars; i++) {
       if(this.starArray[i].alpha >= 1) {
         this.starArray[i].dir = false;
       }
@@ -117,25 +133,6 @@ class App extends Component {
     }
     ctx.restore();
   }
-  ////ANIMATE SUN PULSE
-  animateSun() {
-    if(this.state.flare >= .55) {
-      this.setState({reverse: true});
-    }
-    if(this.state.flare <= .15) {
-      this.setState({reverse: false});
-    }
-    if(this.state.reverse) {
-      this.setState((prevState, props) => ({
-        flare: prevState.flare - 0.01
-      }));
-    }
-    if(!this.state.reverse) {
-      this.setState((prevState, props) => ({
-        flare: prevState.flare + 0.01
-      }));
-    }
-  }
   ////DRAW NEW CANVAS FRAME
   canvasDraw() {
     let canvas = this.canvas.current;
@@ -150,24 +147,36 @@ class App extends Component {
       ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
       ctx.restore();
       this.canvasTwinkle();
-      this.animateSun();
     }
   }
   render() {
+    const header = {
+      about: this.aboutRef.current,
+      portfolio: this.portfolioRef.current,
+      contact: this.contactNavRef.current,
+      bottomPage: this.state.contactBottom,
+      updateDash: this.updateDash,
+      updateDashY: this.updateDashY,
+      width: this.state.width
+    };
+    const dashFunctions = {
+      dash: this.state.dash,
+      dashY: this.state.pathY
+    }
     return (
-      <div id="timeline">
+      <div id="container">
         <EventWrapper handleResize={this.handleResize} >
-        <Header flare={this.state.flare} about={this.aboutRef.current} portfolio={this.portfolioRef.current} contact={this.contactNavRef.current} bottomPage={this.state.contactBottom} updateDash={this.updateDash} updateDashY={this.updateDashY} width={this.state.width} />
+        <Header {...header} />
         <div className="gradient-bg">
           <div className="bg">
             <div className="gradient"></div>
             <div className="stars"></div>
             <div id="canvas-wrapper-stars">
-              <canvas id="canvas-stars" ref={this.canvas} height={this.state.contactBottom - 1200}></canvas>
+              <canvas id="canvas-stars" ref={this.canvas} height="105vh"></canvas>
             </div>
-            <About navRef={this.aboutRef} dash={this.state.dash} dashY={this.state.pathY} width={this.state.width} height={this.state.height} />
-            <Portfolio navRef={this.portfolioRef} dash={this.state.dash} dashY={this.state.pathY} />
-            <Contact navRef={this.contactNavRef} ref={this.contactRef} dash={this.state.dash} dashY={this.state.pathY} />
+            <About navRef={this.aboutRef} {...dashFunctions} width={this.state.width} height={this.state.height} />
+            <Portfolio navRef={this.portfolioRef} {...dashFunctions} width={this.state.width} />
+            <Contact navRef={this.contactNavRef} ref={this.contactRef} {...dashFunctions} />
           </div>
         </div>
         </EventWrapper>
@@ -184,9 +193,10 @@ class EventWrapper extends Component {
     this.throttle = this.throttle.bind(this);
     this.tick = false;
   }
-  throttle (callback, throttle) {
+  ////THROTTLES EVENT LISTENER, USED FOR IE
+  throttle(callback, throttle) {
     let tick = false;
-    return function () {
+    return function() {
       if (!tick) {
         callback();
         tick = true;
@@ -253,14 +263,21 @@ class Header extends Component {
     this.currentlyScrolling = false;
     this.timeout;
   }
-  handleClick(e, element, to, duration) {
+  ////HANDLE CLICK FOR SELECTED ELEMENT
+  handleClick(e, to, duration) {
+    let edge = /Edge/.test(navigator.userAgent);
+    let elTop = document.documentElement;
+    if(edge) {
+      elTop = document.body;
+    }
     e.preventDefault();
     if(this.currentlyScrolling === true) {
       cancelAnimationFrame(this.timeout);
     }
     let scrollHeight = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-    requestAnimationFrame(() => this.scrollTo(element, to + scrollHeight, duration));
+    requestAnimationFrame(() => this.scrollTo(elTop, to + scrollHeight, duration));
   }
+  ////SCROLL TO SELECTED ELEMENT
   scrollTo(element, to, duration) {
     if(duration <= 0) return;
     let difference = to - element.scrollTop;
@@ -271,8 +288,9 @@ class Header extends Component {
       this.currentlyScrolling = false;
     }
     if (element.scrollTop === Math.ceil(to) || Math.ceil(window.innerHeight + window.pageYOffset) >= document.body.offsetHeight) return;
-    this.timeout = requestAnimationFrame(() => this.scrollTo(element, to, duration - 10));
+    this.timeout = requestAnimationFrame(() => this.scrollTo(element, to, duration - 20));
   }
+  ////STOP SCROLLING IF USER SCROLLS
   stopScroll() {
     cancelAnimationFrame(this.timeout);
     this.currentlyScrolling = false;
@@ -289,16 +307,30 @@ class Header extends Component {
     });
   }
   render() {
-    let edge = /Edge/.test(navigator.userAgent);
-    let elTop = document.documentElement;
-    if(edge) {
-      elTop = document.body;
-    }
     return (
       <header>
-        <Nav handleClick={this.handleClick} about={this.props.about} portfolio={this.props.portfolio} contact={this.props.contact} />
+        <Nav handleClick={this.handleClick} about={this.props.about} portfolio={this.props.portfolio} contact={this.props.contact} width={this.props.width} />
         <div className="nav-padding"></div>
         <div className="sun-container">
+          <svg version="1.1" id="sun-flare" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 111.69 111.69" >
+            <filter id="outer-darken">
+              <feColorMatrix
+                type="matrix"
+                values=".6  0   0   0   0
+                        0  .6   0   0   0
+                        0   0  .6   0   0
+                        0   0   0   1   0 "/>
+            </filter>
+            <radialGradient id="outer-flare" cx="50%" cy="50%" r="50%" >
+              <stop offset="88%" stopColor="#ffcd40" />
+              <stop offset="100%" stopColor="#ffbd00" />
+            </radialGradient>
+            <g filter="url(#outer-darken)">
+		          <g>
+			          <circle fill="url(#outer-flare)" cx="55.845" cy="55.845" r="55.845"/>
+		          </g>
+            </g>
+          </svg>
           <svg version="1.1" id="sun" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 111.69 111.69" >
             <filter id="darken">
               <feColorMatrix
@@ -309,8 +341,8 @@ class Header extends Component {
                         0   0   0   1   0 "/>
             </filter>
             <radialGradient id="flare" cx="50%" cy="50%" r="50%" >
-              <stop offset="88%" stopColor="#ffcd40" />
-              <stop offset="100%" stopColor="#ffbd00" stopOpacity={this.props.flare} />
+              <stop offset="88%" stopColor="#ffcd40"/>
+              <stop offset="100%" stopColor="#ffbd00" stopOpacity="0.15" />
             </radialGradient>
             <g filter="url(#darken)">
 		          <g>
@@ -326,29 +358,71 @@ class Header extends Component {
         <div className="header-container">
           <h1>Christian Garza</h1>
           <h2>Hello, I'm a Front-End Developer who is always looking to learn and improve. Feel free to<br/>learn more below.</h2>
-          <div className="next-section" onClick={(e) => this.handleClick(e, elTop, this.props.about.getBoundingClientRect().top - 60, 850)}><i className="fas fa-chevron-down"></i></div>
+          <div className="next-section" onClick={(e) => this.handleClick(e, this.props.about.getBoundingClientRect().top - 60, 850)}><i className="fas fa-chevron-down"></i></div>
         </div>
       </header>
     );
   }
 }
-class Nav extends React.Component {
-  render() {
-    let edge = /Edge/.test(navigator.userAgent);
-    let elTop = document.documentElement;
-    if(edge) {
-      elTop = document.body;
+class Nav extends Component {
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
+    this.handleExit = this.handleExit.bind(this);
+    this.node = React.createRef();
+    this.state = {isMenuOpen: false};
+  }
+  componentDidMount() {
+    window.addEventListener("click", this.handleClick);
+  }
+  componentWillUnmount() {
+    window.removeEventListener("click", this.handleClick);
+  }
+  ////HANDLE NAV BAR MENU CLICK
+  handleClick(e) {
+    if(this.props.width > 800) {
+      return;
     }
+    if(this.node.current.contains(e.target)) {
+      this.setState(prevState => ({
+        isMenuOpen: !prevState.isMenuOpen
+      }));
+      return;
+    }
+    if(this.state.isMenuOpen) {
+      this.handleExit();
+    }
+  }
+  ////CLOSES NAV BAR MENU
+  handleExit(e) {
+    this.setState(prevState => ({
+      isMenuOpen: !prevState.isMenuOpen
+    }));
+  }
+  render() {
     return(
       <nav>
-        <ul>
-          <li><a href="#about" onClick={(e) => this.props.handleClick(e, elTop, this.props.about.getBoundingClientRect().top - 60, 850)}>About</a></li>
-          <li><a href="#portfolio" onClick={(e) => this.props.handleClick(e, elTop, this.props.portfolio.getBoundingClientRect().top - 60, 850)}>Portfolio</a></li>
-          <li><a href="#contact" onClick={(e) => this.props.handleClick(e, elTop, this.props.contact.getBoundingClientRect().top, 850)}>Contact</a></li>
-        </ul>
+        {this.props.width <= 800 ? (
+          <div className="nav-mobile">
+            <i className="fa fa-bars" aria-hidden="true" tabIndex="0" onKeyPress={this.handleClick} ref={this.node}></i>
+            <ul className={"nav-mobile-links " + (this.state.isMenuOpen ? "nav-mobile-links-open" : "")}>
+              <li><a href="#about" onClick={(e) => this.props.handleClick(e, this.props.about.getBoundingClientRect().top - 60, 850)}>About</a></li>
+              <li><a href="#portfolio" onClick={(e) => this.props.handleClick(e, this.props.portfolio.getBoundingClientRect().top - 60, 850)}>Portfolio</a></li>
+              <li><a href={require("./files/Resume.pdf")} download="Resume.pdf">Resume</a></li>
+              <li><a href="#contact" onClick={(e) => this.props.handleClick(e, this.props.contact.getBoundingClientRect().top, 850)}>Contact</a></li>
+            </ul>
+          </div>
+        ) : (
+          <ul>
+            <li><a href="#about" onClick={(e) => this.props.handleClick(e, this.props.about.getBoundingClientRect().top - 60, 850)}>About</a></li>
+            <li><a href="#portfolio" onClick={(e) => this.props.handleClick(e, this.props.portfolio.getBoundingClientRect().top - 60, 850)}>Portfolio</a></li>
+            <li><a href={require("./files/Resume.pdf")} download="Resume.pdf">Resume</a></li>
+            <li><a href="#contact" onClick={(e) => this.props.handleClick(e, this.props.contact.getBoundingClientRect().top, 850)}>Contact</a></li>
+          </ul>
+        )}
         <div className="social-links">
-          <div className="social-tab"><a href="https://github.com/C-Garza" target="_blank" rel="noopener noreferrer"><i className="fab fa-github-square"></i></a></div>
-          <div className="social-tab"><a href="#"><i className="fab fa-linkedin"></i></a></div>
+          <div className="social-tab"><a href="https://github.com/C-Garza" target="_blank" rel="noopener noreferrer" aria-label="My Github Account"><i className="fab fa-github-square"></i></a></div>
+          <div className="social-tab"><a href="https://www.linkedin.com/in/christian-garza-101/" target="_blank" rel="noopener noreferrer" aria-label="My LinkedIn Account"><i className="fab fa-linkedin"></i></a></div>
         </div>
       </nav>
     );
@@ -614,7 +688,7 @@ class TechLines extends Component {
       this.setState({dasharray: lengthDone});
     }
     clearTimeout(this.timeout);
-    this.timeout = setTimeout(() => {this.props.updateDash(lengthDone)},100);
+    this.timeout = setTimeout(() => {this.props.updateDash(lengthDone)}, 100);
     if(lengthDone === 0 && this.state.atBeginning === false) {
       this.setState({atBeginning: true});
     }
@@ -631,36 +705,11 @@ class TechLines extends Component {
       <div className="techLine-container">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" >
           <defs>
-            <linearGradient id="strobe-left" x1="100%" x2="100%" y1="0%" y2="0%">
-              <stop offset="0%" stopColor="rgb(26, 198, 255)" stopOpacity=".45" />
-              <stop offset="100%" stopColor="rgb(26, 198, 255)"/>
-            </linearGradient>
-            <linearGradient id="test" x1="0%" x2="0%" y1="0%" y2="100%">
-              <stop offset="0%" stopColor="rgb(26, 198, 255)" stopOpacity=".45" />
-              <stop offset="50%" stopColor="rgb(26, 198, 255)" />
-              <stop offset="100%" stopColor="rgb(26, 198, 255)" stopOpacity=".45" />
-            </linearGradient>
-            <radialGradient id="circle-aura" cx="50%" cy="50%" r="30%" fx="40%" fy="50%">
-              <stop offset="0%" stopColor="rgb(26, 198, 255)" stopOpacity=".55" />
-              <stop offset="100%" stopColor="rgb(26, 198, 255)" stopOpacity="0" />
-            </radialGradient>
             <filter id="chrome">
               <feGaussianBlur result="coloredBlur" stdDeviation="3"></feGaussianBlur>
               <feMerge>
                 <feMergeNode in="coloredBlur"></feMergeNode>
                 <feMergeNode in="coloredBlur"></feMergeNode>
-                <feMergeNode in="SourceGraphic"></feMergeNode>
-              </feMerge>
-            </filter>
-            <filter id="glow" width="250%" height="250%" x="-20%" y="-60%">
-            <feMorphology operator="dilate" radius="2" in="SourceAlpha" result="thicken" />
-            <feGaussianBlur in="thicken" stdDeviation="3" result="blurred" />
-            <feFlood floodColor="rgb(26, 198, 255)" result="glowColor" />
-            <feComposite in="glowColor" in2="blurred" operator="in" result="softGlow_colored" />
-              <feGaussianBlur result="coloredBlur" stdDeviation="5"></feGaussianBlur>
-              <feMerge>
-                <feMergeNode in="coloredBlur"></feMergeNode>
-                <feMergeNode in="softGlow_colored"/>
                 <feMergeNode in="SourceGraphic"></feMergeNode>
               </feMerge>
             </filter>
@@ -724,22 +773,20 @@ class TechLines extends Component {
 }
 function AboutTile(props) {
   return(
-    <div className={"about-tile " + props.class} style={props.style}>
-      <div className="about-tile-icon">
-        {props.hex &&
-          <React.Fragment>
-            <div className="hex"></div>
-            <div className="border-hex"></div>
-          </React.Fragment>
-        }
-        <i className={props.icon}></i>
-        {props.icon2 && 
-          <i className={props.icon2}></i>
-        }
-        <p>{props.header}</p>
-      </div>
-      <div className="about-tile-caption">
-        <p>{props.caption}</p>
+    <div className={props.activeHex ? "about-tile about-tile-active " + props.class : "about-tile " + props.class} style={props.style}>
+      <div className="about-tile-hex-flip">
+          <div className={props.activeHex ? "hex-active" : "hex"}></div>
+          <div className={"border-hex"}></div>
+        <div className="about-tile-icon">
+          <i className={props.icon}></i>
+          {props.icon2 && 
+            <i className={props.icon2}></i>
+          }
+          <p>{props.header}</p>
+        </div>
+        <div className="about-tile-caption">
+          <p>{props.caption}</p>
+        </div>
       </div>
     </div>
   );
@@ -747,82 +794,13 @@ function AboutTile(props) {
 class About extends Component {
   constructor(props) {
     super(props);
-    this.state = {degree: 0, isShowing: true, isOnScroll: false, isOnScrollTiles: false, hasLight: false, front: "", back: "", left: "", right: "", clear: "translateY(0px)", isButtonDisabled: false};
-    this.handleClick = this.handleClick.bind(this);
-    this.rotate = this.rotate.bind(this);
-    this.translateSpheres = this.translateSpheres.bind(this);
+    this.state = {isOnScroll: false, isOnScrollTiles: false, hasLight: false, mobileHex: false};
     this.animateOnScroll = this.animateOnScroll.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
     this.handleLight = this.handleLight.bind(this);
     this.aboutRef = React.createRef();
     this.aboutPictureRef = React.createRef();
     this.aboutTilesContainerRef = React.createRef();
-  }
-  ////HANDLES CLICK FOR PLANET MODE BUTTONS
-  handleClick(e) {
-    if(e.target.id === "next" || e.target.id === "prev") {
-      this.rotate(e.target.id);
-    }
-    if(e.target.id === "planet" || e.target.classList[2] === "fa-stack-1x" || e.target.classList[0] === "fa-stack") {
-      let newState = this.state.isShowing ? false : true;
-      this.setState({isShowing: newState, isButtonDisabled: true});
-      setTimeout(() => {this.setState({isButtonDisabled: false, degree: 0})}, 1000);
-    }
-  }
-  ////CHANGES DEGREES STATE AND ROTATES PLANETS
-  rotate(e) {
-    if(e === "next") {
-      this.setState((prevState, props) => ({
-        degree: prevState.degree - 90
-      }));
-    }
-    if(e === "prev") {
-      this.setState((prevState, props) => ({
-        degree: prevState.degree + 90
-      }));
-    }
-  }
-  ////KEEPS TRANSFORM POSITIONS OF PLANETS AS THEY ROTATE AROUND
-  translateSpheres() {
-    //Sphere 1 is front, Sphere 2 is right, Sphere 3 is back, Sphere 4 is left
-    let originalFront = "rotateY(0deg) translateZ(300px)";
-    let originalBack = "rotateY(180deg) translateZ(300px) rotateY(-180deg)";
-    let originalLeft = "rotateY(270deg) translateZ(200px) rotateY(-270deg) translateX(-100px)";
-    let originalRight = "rotateY(90deg) translateZ(200px) rotateY(-90deg) translateX(100px)";
-    let translateDown = "translateY(50px)";
-    let translateUp = "translateY(-50px)";
-    if(this.state.degree % 360 === 0) {
-      //Sphere 1 and 3 are translated spheres
-      this.setState({front: originalFront + translateDown, 
-      back: originalBack + translateUp,
-      left: originalLeft + this.state.clear,
-      right: originalRight + this.state.clear
-    });
-    }
-    if((this.state.degree <= 0 && this.state.degree % 360 === -90) || (this.state.degree >= 0 && this.state.degree % 360 === 270)) {
-      //Sphere 2 and 4 are front/back
-      this.setState({front: originalFront + this.state.clear,
-      back: originalBack + this.state.clear,
-      left: originalLeft + translateUp,
-      right: originalRight + translateDown
-      });
-    }
-    if((this.state.degree <= 0 && this.state.degree % 360 === -180) || (this.state.degree >= 0 && this.state.degree % 360 === 180)) {
-      //Sphere 3 and 1 are front/back
-      this.setState({front: originalFront + translateUp,
-      back: originalBack + translateDown,
-      left: originalLeft + this.state.clear,
-      right: originalRight + this.state.clear
-      });
-    }
-    if((this.state.degree <= 0 && this.state.degree % 360 === -270) || (this.state.degree >= 0 && this.state.degree % 360 === 90)) {
-      //Sphere 4 and 2 are front/back
-      this.setState({front: originalFront + this.state.clear,
-      back: originalBack + this.state.clear,
-      left: originalLeft + translateDown,
-      right: originalRight + translateUp
-      });
-    }
   }
   ////TRIGGERS HEXAGON AND PICTURE CONTAINER ANIMATIONS
   animateOnScroll(e) {
@@ -847,11 +825,11 @@ class About extends Component {
     }
   }
   componentDidUpdate(prevProps, prevState) {
-    if(prevState.degree !== this.state.degree) {
-      this.translateSpheres();
+    if(this.props.width <= 800 && this.state.mobileHex === false) {
+      this.setState({mobileHex: true});
     }
-    if(this.props.width <= 1555 && this.state.isShowing === false) {
-      this.setState({isShowing: true, degree: 0});
+    if(this.props.width > 800 && this.state.mobileHex) {
+      this.setState({mobileHex: false});
     }
     if(prevProps.dash !== this.props.dash) {
       let e = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
@@ -877,87 +855,66 @@ class About extends Component {
     }
   }
   render() {
-    let carouselTransform = {transform: "rotateY("+this.state.degree+"deg)"};
-    let tileTransform = {transform: "rotateY("+(-this.state.degree)+"deg)"};
     let visibilityStyle = {visibility: this.state.isOnScrollTiles ? "inherit" : "hidden"};
     let tilesAnimateClass = this.state.isOnScrollTiles ? "about-tile-animate" : "";
     let toggleLight = this.state.hasLight ? "animate-sign" : "";
-    let craters = <React.Fragment><div className="craters crater"></div>
-    <div className="craters crater2"></div>
-    <div className="craters crater3"></div>
-    <div className="craters crater4"></div>
-    <div className="craters crater5"></div></React.Fragment>;
-    let bobPlanetAdjust = [{transform: this.state.front}, {transform: this.state.right}, {transform: this.state.back}, {transform: this.state.left}];
+    const tileProps = {
+      class: tilesAnimateClass,
+      style: visibilityStyle
+    };
     return(
       <section id="about" ref={this.props.navRef}>
       <EventWrapper handleScroll={this.handleScroll} >
         <div className="section-background"></div>
         <h2 ref={this.aboutRef}><span className={"about-header " + toggleLight}>ABOUT</span></h2>
         <div className="about-picture-container" ref={this.aboutPictureRef} style={{visibility: this.state.isOnScroll ? "inherit" : "hidden"}}>
-          <div className={"about-picture " + (this.state.isOnScroll ? "about-picture-animation" : "")}></div>
+          <div className={"about-picture " + (this.state.isOnScroll ? "about-picture-animation" : "")}>
+            <img src={require("./images/christian-garza.jpg")} alt="Christian Garza" />
+          </div>
           <div className={"about-picture-caption " + (this.state.isOnScroll ? "about-picture-animation" : "")}>
             <h3>I'm a Front-End Developer who aims to build fully responsive layouts and keeping users engaged 
-              through animation and designs, all while maintaining best practices in code. </h3>
+              through animation and designs, all while maintaining best practices in code.</h3>
           </div>
         </div>
         <div className="about-tiles-container" ref={this.aboutTilesContainerRef} >
-          <div className={"hexagons " + (this.state.isShowing ? "toggleAnimation" : "hideClass")}>
-            <AboutTile class={tilesAnimateClass} style={visibilityStyle} icon="fas fa-laptop-code" header="Web Development" caption="Skillset specifically tailored for front-end proficiency." hex={true} ></AboutTile>
-            <AboutTile class={tilesAnimateClass} style={visibilityStyle} icon="fas fa-desktop" icon2="fas fa-mobile-alt fa-small" header="Responsive Layouts" caption="Strives to make layouts work on any device a top priority." hex={true}></AboutTile>
-            <AboutTile class={tilesAnimateClass} style={visibilityStyle} icon="fas fa-lightbulb" header="Perseverant Attitude" caption="Never gives up without learning something new. Always learning." hex={true}></AboutTile>
-            <AboutTile class={tilesAnimateClass} style={visibilityStyle} icon="fas fa-globe-americas" header="Passionately Curious" caption="Enjoys learning how and why things work. Always questioning." hex={true}></AboutTile>
-          </div>
-          <div className={"carousel-container " + (this.state.isShowing ? "hideClass" : "")}>
-            <div className="spheres carousel" style={carouselTransform}>
-              <div className="planet-position" style={bobPlanetAdjust[0]}>
-                <div className={(this.state.isShowing ? "" : "animation-wrap") + " ani-one"}>
-                  <figure className="sphere" style={tileTransform}>
-                    {craters}
-                    <AboutTile class={tilesAnimateClass} style={visibilityStyle} icon="fas fa-laptop-code" header="Web Development" caption="Skillset specifically tailored for front-end proficiency."></AboutTile>
-                  </figure>
-                </div>
+          {this.state.mobileHex ? (
+            <div className={"hexagons " + (this.state.isOnScrollTiles ? "toggleAnimation" : "hideClass")}>
+              <div className="single-hex">
+                <AboutTile {...tileProps} icon="fas fa-laptop-code" header="Web Development" caption="Skillset specifically tailored for front-end proficiency."></AboutTile>
               </div>
-              <div className="planet-position" style={bobPlanetAdjust[1]}>
-                <div className={(this.state.isShowing ? "" : "animation-wrap") + " ani-two"}>
-                  <figure className="sphere" style={tileTransform}>
-                    {craters}
-                    <AboutTile class={tilesAnimateClass} style={visibilityStyle} icon="fas fa-desktop" icon2="fas fa-mobile-alt fa-small" header="Responsive Layouts" caption="Strives to make layouts work on any device a top priority."></AboutTile>
-                  </figure>
-                </div>
+              <div className="single-hex">
+                <AboutTile {...tileProps} icon="fas fa-desktop" icon2="fas fa-mobile-alt fa-small" header="Responsive Layouts" caption="Strives to make layouts work on any device a top priority."></AboutTile>
               </div>
-              <div className="planet-position" style={bobPlanetAdjust[2]}>
-                <div className={(this.state.isShowing ? "" : "animation-wrap") + " ani-three"}>
-                  <figure className="sphere" style={tileTransform}>
-                    {craters}
-                    <AboutTile class={tilesAnimateClass} style={visibilityStyle} icon="fas fa-lightbulb" header="Perseverant Attitude" caption="Never gives up without learning something new. Always learning."></AboutTile>
-                  </figure>
-                </div>
+              <div className="single-hex">
+                <AboutTile {...tileProps} icon="fas fa-lightbulb" header="Perseverant Attitude" caption="Never gives up without learning something new. Always learning."></AboutTile>
               </div>
-              <div className="planet-position" style={bobPlanetAdjust[3]}>
-                <div className={(this.state.isShowing ? "" : "animation-wrap") + " ani-four"}>
-                  <figure className="sphere" style={tileTransform}>
-                    {craters}
-                    <AboutTile class={tilesAnimateClass} style={visibilityStyle} icon="fas fa-globe-americas" header="Passionately Curious" caption="Enjoys learning how and why things work. Always questioning."></AboutTile>
-                  </figure>
-                </div>
+              <div className="single-hex">
+                <AboutTile {...tileProps} icon="fas fa-globe-americas" header="Passionately Curious" caption="Enjoys learning how and why things work. Always questioning."></AboutTile>
               </div>
             </div>
-            <div className="button-container">
-              <button id="prev" className="button button-choice" onClick={this.handleClick}>Previous</button>
-              <button id="next" className="button button-choice" onClick={this.handleClick}>Next</button>
+          ) : (
+            <div className={"hexagons " + (this.state.isOnScrollTiles ? "toggleAnimation" : "hideClass")}>
+            <div className="odd-row-hex single-hex">
+              <AboutTile {...tileProps} icon="fas fa-lightbulb" header="Perseverant Attitude" caption="Never gives up without learning something new. Always learning."></AboutTile>
+            </div>
+            <div className="even-row-hex">
+              <AboutTile {...tileProps} activeHex={true}></AboutTile>
+              <AboutTile {...tileProps} icon="fas fa-desktop" icon2="fas fa-mobile-alt fa-small" header="Responsive Layouts" caption="Strives to make layouts work on any device a top priority."></AboutTile>
+              <AboutTile {...tileProps} activeHex={true}></AboutTile>
+              <AboutTile {...tileProps} activeHex={true}></AboutTile>
+            </div>
+            <div className="odd-row-hex">
+              <AboutTile {...tileProps} icon="fas fa-laptop-code" header="Web Development" caption="Skillset specifically tailored for front-end proficiency."></AboutTile>
+              <AboutTile {...tileProps} icon="fas fa-globe-americas" header="Passionately Curious" caption="Enjoys learning how and why things work. Always questioning."></AboutTile>
+              <AboutTile {...tileProps} activeHex={true}></AboutTile>
             </div>
           </div>
-          <div className="button-container button-container-position">
-            <button id="planet" className={"button " + (this.state.isShowing ? "planet-off" : "planet-on")} onClick={this.handleClick} disabled={this.state.isButtonDisabled}>
-              <span className="fa-stack">
-                <i className={"fa fa-circle fa-stack-1x " + (this.state.isShowing ? "planet-grass-off" : "planet-grass-on")}></i>
-                <i className={"fas fa-globe-americas fa-stack-1x " + (this.state.isShowing ? "planet-water-off" : "planet-water-on")}></i>
-              </span>
-            </button>
-          </div>
+          )}
         </div>
         <div className="about-tech-container">
-          <div className="about-tech-header"><h2>Technologies I Use</h2></div>
+          <div className="about-tech-header">
+            <h2>Technologies I Use</h2>
+          </div>
           <i className="about-tech-icon devicon-react-original-wordmark icon"></i>
           <i className="about-tech-icon devicon-html5-plain-wordmark icon"></i>
           <i className="about-tech-icon devicon-css3-plain-wordmark icon"></i>
@@ -970,43 +927,307 @@ class About extends Component {
     );
   }
 }
-function PortfolioTile(props) {
+function PlanetTile(props) {
   return(
-    <div className={"portfolio-tile " + props.class}>
-      <a href={props.href} target="_blank" rel="noopener noreferrer">
-      <img className="portfolio-tile-image" src={require("" + props.src)} alt={props.alt} />
-      <div className="portfolio-tile-overlay">
-        <div className="portfolio-tile-overlay-header">
-          <h3>{props.header}</h3>
-          <h5>{props.caption}</h5>
-        </div>
-        <div className="portfolio-tile-overlay-icons">
-          <i className={props.icon + " small-icon"}></i>
-          <i className={props.icon2 + " small-icon"}></i>
-          {props.icon3 && 
-            <i className={props.icon3 + " small-icon"}></i>
-          }
-          {props.icon4 && 
-            <i className={props.icon4 + " small-icon"}></i>
-          }
+    <div className="planet-container" style={props.container}>
+      <div className={"planet-position " + props.planetNumber} style={props.planet} onClick={props.handleClick}>
+        <div className={"animation-wrap " + props.animationNumber}>
+          <div className={"sphere " + (props.degree)}>
+            {props.children}
+          </div>
         </div>
       </div>
-      </a>
     </div>
   );
 }
+const PortfolioTile = React.forwardRef((props, ref) => (
+  <React.Fragment>
+    {!props.isMobile && 
+      <div className="sphere-title">
+        <a href={props.href} target="_blank" rel="noopener noreferrer" onMouseDown={e => {props.handleLink ? "" : e.preventDefault()}} onClick={e => {props.handleLink ? "" : e.preventDefault()}}>
+          <h2>{props.header}</h2>
+        </a>
+      </div>
+    }
+    <a className="portfolio-tile-link" href={props.href} target="_blank" rel="noopener noreferrer" onMouseDown={e => {props.handleLink ? "" : e.preventDefault()}} onClick={e => {props.handleLink ? "" : e.preventDefault()}} ref={ref}>
+    <div className={"portfolio-tile " + props.class}>
+      <img className="portfolio-tile-image" src={require("" + props.src)} alt={props.alt} />
+      <div className="portfolio-tile-image-foreground"></div>
+      {props.isMobile &&
+        <div className="portfolio-tile-overlay">
+          <div className="portfolio-tile-overlay-header">
+            <h3>{props.header}</h3>
+            <h5>{props.caption}</h5>
+          </div>
+          <div className="portfolio-tile-overlay-icons">
+            <i className={props.icon + " small-icon"}></i>
+            <i className={props.icon2 + " small-icon"}></i>
+            {props.icon3 && 
+              <i className={props.icon3 + " small-icon"}></i>
+            }
+            {props.icon4 && 
+              <i className={props.icon4 + " small-icon"}></i>
+            }
+          </div>
+        </div>
+      }
+    </div>
+    {!props.isMobile &&
+      <div className="project-tooltip">
+        <div className="portfolio-tile-overlay">
+          <div className="portfolio-tile-overlay-header">
+            <h3>{props.header}</h3>
+            <h5>{props.caption}</h5>
+          </div>
+          <div className="portfolio-tile-overlay-icons">
+            <i className={props.icon + " small-icon"}></i>
+            <i className={props.icon2 + " small-icon"}></i>
+            {props.icon3 && 
+            <i className={props.icon3 + " small-icon"}></i>
+            }
+            {props.icon4 && 
+              <i className={props.icon4 + " small-icon"}></i>
+            }
+          </div>
+        </div>
+      </div>
+    }
+    </a>
+  </React.Fragment>
+));
 class Portfolio extends Component {
   constructor(props) {
     super(props);
-    this.state = {hasLight: false, isOnScroll: false};
+    this.state = {hasLight: false, isOnScroll: false, degree: 0, front: "", back: "", left: "", right: "", conFront: "", conBack: "", conLeft: "", conRight: "", isButtonDisabled: false, isMobile: false};
     this.handleLight = this.handleLight.bind(this);
+    this.handleFocus = this.handleFocus.bind(this);
+    this.handleClick = this.handleClick.bind(this);
+    this.rotate = this.rotate.bind(this);
+    this.translateSpheres = this.translateSpheres.bind(this);
     this.projectRef = React.createRef();
     this.portfolioTilesContainerRef = React.createRef();
+    this.portfolioLinkRef = [...Array(4)].map(() => React.createRef());
+    this.stopTimeout = "";
+  }
+  componentDidMount() {
+    if(this.props.width <= 1150) {
+      this.setState({isMobile: true});
+    }
   }
   componentDidUpdate(prevProps, prevState) {
     if(prevProps.dash !== this.props.dash) {
       let e = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
       this.handleLight(e);
+    }
+    if(prevState.degree !== this.state.degree) {
+      this.translateSpheres();
+    }
+    if(this.props.width <= 1150 && !this.state.isMobile) {
+      this.setState((prevState, props) => ({
+        isMobile: true
+      }), () => {this.translateSpheres()});
+    }
+    if(this.props.width > 1150 && this.state.isMobile) {
+      this.setState((prevState, props) => ({
+        isMobile: false
+      }), () => {this.translateSpheres()});
+    }
+  }
+  handleFocus() {
+    let portfolioLinkRef = this.portfolioLinkRef;
+    if(this.state.degree === 0) {
+      if(portfolioLinkRef[0].current === document.activeElement) {
+        portfolioLinkRef[0].current.blur();
+      }
+      else {
+        portfolioLinkRef[0].current.focus();
+      }
+    }
+    if(this.state.degree === -90) {
+      if(portfolioLinkRef[1].current === document.activeElement) {
+        portfolioLinkRef[1].current.blur();
+      }
+      else {
+        portfolioLinkRef[1].current.focus();
+      }
+    }
+    if(this.state.degree === -180) {
+      if(portfolioLinkRef[2].current === document.activeElement) {
+        portfolioLinkRef[2].current.blur();
+      }
+      else {
+        portfolioLinkRef[2].current.focus();
+      }
+    }
+    if(this.state.degree === -270) {
+      if(portfolioLinkRef[3].current === document.activeElement) {
+        portfolioLinkRef[3].current.blur();
+      }
+      else {
+        portfolioLinkRef[3].current.focus();
+      }
+    }
+  }
+  handleClick(e,arrow) {
+    let planetTile = e.target.closest(".planet-position");
+    if(planetTile) {
+      let planetPosition = planetTile.classList[1];
+      if(planetPosition === "planet-one") {
+        if(this.state.degree === 0) {
+          return;
+        }
+        clearTimeout(this.stopTimeout);
+        if(this.state.degree === -90 || this.state.degree === -270) {
+          this.setState({degree: 0});
+        }
+        else {
+          this.setState({degree: -90});
+          this.stopTimeout = setTimeout(() => {this.setState({degree: 0})}, 610);
+        }
+      }
+      if(planetPosition === "planet-two") {
+        if(this.state.degree === -90) {
+          return;
+        }
+        clearTimeout(this.stopTimeout);
+        if(this.state.degree === -180 || this.state.degree === 0) {
+          this.setState({degree: -90});
+        }
+        else {
+          this.setState({degree: -180});
+          this.stopTimeout = setTimeout(() => {this.setState({degree: -90})}, 610);
+        }
+      }
+      if(planetPosition === "planet-three") {
+        if(this.state.degree === -180) {
+          return;
+        }
+        clearTimeout(this.stopTimeout);
+        if(this.state.degree === -270 || this.state.degree === -90) {
+          this.setState({degree: -180});
+        }
+        else {
+          this.setState({degree: -90});
+          this.stopTimeout = setTimeout(() => {this.setState({degree: -180})}, 610);
+        }
+      }
+      if(planetPosition === "planet-four") {
+        if(this.state.degree === -270) {
+          return;
+        }
+        clearTimeout(this.stopTimeout);
+        if(this.state.degree === 0 || this.state.degree === -180) {
+          this.setState({degree: -270});
+        }
+        else {
+          this.setState({degree: -180});
+          this.stopTimeout = setTimeout(() => {this.setState({degree: -270})}, 610);
+        }
+      }
+    }
+    if((arrow === "next" || arrow === "prev") && !this.state.isButtonDisabled) {
+      //WAIT UNTIL TRANSITION END TO ENABLE BUTTON AGAIN
+      //OR DISABLE BUTTON FOR 610 WHEN CALLED
+      e.stopPropagation();
+      clearTimeout(this.stopTimeout);
+      this.setState({isButtonDisabled: true});
+      setTimeout(() => {this.setState({isButtonDisabled: false})}, 610);
+      this.rotate(arrow);
+    }
+  }
+  ////CHANGES DEGREES STATE AND ROTATES PLANETS
+  rotate(e) {
+    if(e === "next") {
+      this.setState((prevState, props) => ({
+        degree: prevState.degree === -270 ? 0 : prevState.degree - 90
+      }));
+    }
+    if(e === "prev") {
+      this.setState((prevState, props) => ({
+        degree: prevState.degree === 0 ? -270 : prevState.degree + 90
+      }));
+    }
+  }
+  ////KEEPS TRANSFORM POSITIONS OF PLANETS AS THEY ROTATE AROUND
+  translateSpheres() {
+    ////CONTAINER (con-) HANDLES X-AXIS TRANSITION AND SPHERE (original-) HANDLES Y-AXIS TRANSITION
+    let originalFront = "";
+    let originalBack = "";
+    let originalLeft = "";
+    let originalRight = "";
+    let conFront = "";
+    let conBack = "";
+    let conLeft = "";
+    let conRight = "";
+    ////DESKTOP VALUES
+    if(!this.state.isMobile) {
+      originalFront = "translateY(0px) scale3D(1,1,1)";
+      originalBack = "translateY(-100px) scale3d(0.5,0.5,0.5)";
+      originalLeft = "translateY(70px) scale3d(0.65,0.65,0.65)";
+      originalRight = "translateY(-100px) scale3d(0.78,0.78,0.78)";
+      conFront = "translateZ(300px)";
+      conBack = "translateZ(150px) translateX(-100px)";
+      conLeft = "translateZ(250px) translateX(-360px)";
+      conRight = "translateZ(250px) translateX(340px)";
+    }
+    ////MOBILE VALUES
+    else {
+      originalFront = "translateY(30px)";
+      originalBack = "translateY(-100px) scale3d(0.8,0.8,0.8)";
+      originalLeft = "translateY(-20px) scale3d(0.9,0.9,0.9)";
+      originalRight = "translateY(-20px) scale3d(0.9,0.9,0.9)";
+      conFront = "translateZ(300px)";
+      conBack = "translateZ(150px) translateX(0px)";
+      conLeft = "translateZ(200px) translateX(-250px)";
+      conRight = "translateZ(200px) translateX(250px)";
+    }
+    if(this.state.degree % 360 === 0) {
+      //Sphere 1 and 3 are translated spheres
+      this.setState({front: originalFront, 
+      back: originalBack,
+      left: originalLeft,
+      right: originalRight,
+      conFront: conFront,
+      conBack: conBack,
+      conLeft: conLeft,
+      conRight: conRight
+    });
+    }
+    if((this.state.degree <= 0 && this.state.degree % 360 === -90) || (this.state.degree >= 0 && this.state.degree % 360 === 270)) {
+      //Sphere 2 and 4 are front/back
+      this.setState({front: originalLeft,
+      back: originalRight,
+      left: originalBack,
+      right: originalFront,
+      conFront: conLeft,
+      conBack: conRight,
+      conLeft: conBack,
+      conRight: conFront
+      });
+    }
+    if((this.state.degree <= 0 && this.state.degree % 360 === -180) || (this.state.degree >= 0 && this.state.degree % 360 === 180)) {
+      //Sphere 3 and 1 are front/back
+      this.setState({front: originalBack,
+      back: originalFront,
+      left: originalRight,
+      right: originalLeft,
+      conFront: conBack,
+      conBack: conFront,
+      conLeft: conRight,
+      conRight: conLeft
+      });
+    }
+    if((this.state.degree <= 0 && this.state.degree % 360 === -270) || (this.state.degree >= 0 && this.state.degree % 360 === 90)) {
+      //Sphere 4 and 2 are front/back
+      this.setState({front: originalRight,
+      back: originalLeft,
+      left: originalFront,
+      right: originalBack,
+      conFront: conRight,
+      conBack: conLeft,
+      conLeft: conFront,
+      conRight: conBack
+      });
     }
   }
   ////HANDLES LIGHT ANIMATION FOR HEADER
@@ -1024,17 +1245,151 @@ class Portfolio extends Component {
   }
   render() {
     let toggleLight = this.state.hasLight ? "animate-sign" : "";
+    let ie = window.navigator.userAgent.match(/(MSIE|Trident)/);
     let tilesAnimateClass = this.state.isOnScroll ? "portfolio-tile-animate " : "";
     let icons = {html5: "devicon-html5-plain-wordmark", css3: "devicon-css3-plain-wordmark", js: "devicon-javascript-plain", jquery: "devicon-jquery-plain-wordmark", react: "devicon-react-original-wordmark"};
+    let transitionChangeSide = (this.state.degree === 0 || this.state.degree === -180 ? "transform 0.6s linear" : "transform 0.6s cubic-bezier(.73,0,1,1)");
+    let transitionChangeFront = (this.state.degree === 0 || this.state.degree === -180 ? "transform 0.6s cubic-bezier(.73,0,1,1)" : "transform 0.6s linear");
+    let conPlanetAdjust = [{transform: this.state.conFront, transition: transitionChangeFront}, {transform: this.state.conRight, transition: transitionChangeSide}, {transform: this.state.conBack, transition: transitionChangeFront}, {transform: this.state.conLeft, transition: transitionChangeSide}];
+    let bobPlanetAdjust = [{transform: this.state.front, transition: transitionChangeSide}, {transform: this.state.right, transition: transitionChangeFront}, {transform: this.state.back, transition: transitionChangeSide}, {transform: this.state.left, transition: transitionChangeFront}];
+    let handleClick = this.handleClick;
+    const isFrontTile = {
+      tileOne: this.state.degree === 0 ? "portfolio-tile-front" : "",
+      tileTwo: this.state.degree === -90 ? "portfolio-tile-front" : "",
+      tileThree: this.state.degree === -180 ? "portfolio-tile-front" : "",
+      tileFour: this.state.degree === -270 ? "portfolio-tile-front" : ""
+    };
+    const isFrontTileLink = {
+      tileOne: this.state.degree === 0 ? true : false,
+      tileTwo: this.state.degree === -90 ? true : false,
+      tileThree: this.state.degree === -180 ? true : false,
+      tileFour: this.state.degree === -270 ? true : false
+    }
     return(
       <section id="portfolio" ref={this.props.navRef}>
         <EventWrapper handleScroll={this.handleLight} >
           <h2 ref={this.projectRef}><span className={"project-header " + toggleLight}>PROJECTS</span></h2>
           <div className="portfolio-tiles-container" ref={this.portfolioTilesContainerRef}>
-            <PortfolioTile class={tilesAnimateClass} href="https://github.com/C-Garza/Portfolio" src="./images/portfolio screenshot.png" alt="My Portfolio Site" header="Portfolio Site" caption="My portfolio site created and designed by me. Check out my code on GitHub!" icon={icons.react} icon2={icons.css3} ></PortfolioTile>
-            <PortfolioTile class={tilesAnimateClass} href="https://c-garza.github.io/Wiki-Viewer/" src="./images/wiki screenshot.png" alt="Wikipedia Viewer" header="Wikipedia Viewer" caption="Using the MediaWiki API, this project provides a search interface for Wikipedia pages." icon={icons.html5} icon2={icons.css3} icon3={icons.jquery} ></PortfolioTile>
-            <PortfolioTile class={tilesAnimateClass} href="#" src="./images/book fund screenshot.png" alt="Latino Book Fund" header="Latino Book Fund" caption="Currently in the process of redesigning a local non-profit website." icon={icons.html5} icon2={icons.css3} icon3={icons.js}></PortfolioTile>
-            <PortfolioTile class={tilesAnimateClass} href="https://c-garza.github.io/Random-Quote-Generator/" src="./images/random quote screenshot.png" alt="Random Quote Generator" header="Random Quote Generator" caption="Using the Quotes on Design API, this project displays a new random quote on click." icon={icons.html5} icon2={icons.css3} icon3={icons.js} ></PortfolioTile>
+            {ie &&
+              <div className="square-tiles">
+                <PortfolioTile 
+                  isMobile={true} 
+                  class={tilesAnimateClass} 
+                  handleLink={true} 
+                  href="https://github.com/C-Garza/Portfolio" 
+                  src="./images/portfolio-screenshot.png" 
+                  alt="My Portfolio Site" 
+                  header="Portfolio Site" 
+                  caption="My portfolio site created and designed by me. Check out my code on GitHub!" 
+                  icon={icons.react} 
+                  icon2={icons.css3} >
+                </PortfolioTile>
+                <PortfolioTile 
+                  isMobile={true} 
+                  class={tilesAnimateClass} 
+                  handleLink={true} 
+                  href="https://c-garza.github.io/Wiki-Viewer/" 
+                  src="./images/wiki-screenshot.png" 
+                  alt="Wikipedia Viewer" 
+                  header="Wikipedia Viewer" 
+                  caption="Using the MediaWiki API, this project provides a search interface for Wikipedia pages." 
+                  icon={icons.html5} 
+                  icon2={icons.css3} 
+                  icon3={icons.jquery} >
+                </PortfolioTile>
+                <PortfolioTile 
+                  isMobile={true} 
+                  class={tilesAnimateClass} 
+                  handleLink={true} 
+                  href="https://latinobookfund.com/dev/" 
+                  src="./images/book-fund-screenshot.png" 
+                  alt="Latino Book Fund" 
+                  header="Latino Book Fund" 
+                  caption="Currently in the process of redesigning a local non-profit website." 
+                  icon={icons.html5} 
+                  icon2={icons.css3} 
+                  icon3={icons.js}>
+                </PortfolioTile>
+                <PortfolioTile 
+                  isMobile={true} 
+                  class={tilesAnimateClass} 
+                  handleLink={true} 
+                  href="https://c-garza.github.io/Random-Quote-Generator/" 
+                  src="./images/random-quote-screenshot.png" 
+                  alt="Random Quote" 
+                  header="Random Quote" 
+                  caption="Using lukePeavey's Quotable API, this project displays a new random quote on click." 
+                  icon={icons.html5} 
+                  icon2={icons.css3} 
+                  icon3={icons.js} >
+                </PortfolioTile>
+              </div>        
+            }
+            <div className="carousel-container">
+              <div className="spheres carousel">
+                <PlanetTile container={conPlanetAdjust[0]} planet={bobPlanetAdjust[0]} planetNumber={"planet-one"} animationNumber={"ani-one"} handleClick={this.handleClick} degree={this.state.degree === 0 ? "sphere-front" : ""}>
+                  <PortfolioTile 
+                    ref={this.portfolioLinkRef[0]}
+                    isMobile={this.state.isMobile} 
+                    class={isFrontTile.tileOne} 
+                    handleLink={isFrontTileLink.tileOne} 
+                    href="https://github.com/C-Garza/Portfolio" 
+                    src="./images/portfolio-screenshot.png" 
+                    alt="My Portfolio Site" 
+                    header="Portfolio Site"
+                    caption="My portfolio site created and designed by me. Check out my code on GitHub!" 
+                    icon={icons.react} icon2={icons.css3}>
+                  </PortfolioTile>
+                </PlanetTile>
+                <PlanetTile container={conPlanetAdjust[1]} planet={bobPlanetAdjust[1]} planetNumber={"planet-two"} animationNumber={"ani-two"} handleClick={this.handleClick} degree={this.state.degree === -90 ? "sphere-front" : ""}>
+                  <PortfolioTile 
+                    ref={this.portfolioLinkRef[1]}
+                    isMobile={this.state.isMobile} 
+                    class={isFrontTile.tileTwo} 
+                    handleLink={isFrontTileLink.tileTwo} 
+                    href="https://c-garza.github.io/Wiki-Viewer/" 
+                    src="./images/wiki-screenshot.png" 
+                    alt="Wikipedia Viewer" 
+                    header="Wikipedia Viewer" 
+                    caption="Using the MediaWiki API, this project provides a search interface for Wikipedia pages." 
+                    icon={icons.html5} icon2={icons.css3} icon3={icons.jquery}>
+                  </PortfolioTile>
+                </PlanetTile> 
+                <PlanetTile container={conPlanetAdjust[2]} planet={bobPlanetAdjust[2]} planetNumber={"planet-three"} animationNumber={"ani-three"} handleClick={this.handleClick} degree={this.state.degree === -180 ? "sphere-front" : ""}>
+                  <PortfolioTile 
+                    ref={this.portfolioLinkRef[2]}
+                    isMobile={this.state.isMobile} 
+                    class={isFrontTile.tileThree} 
+                    handleLink={isFrontTileLink.tileThree} 
+                    href="https://latinobookfund.com/dev/" 
+                    src="./images/book-fund-screenshot.png" 
+                    alt="Latino Book Fund" 
+                    header="Latino Book Fund" 
+                    caption="Currently in the process of redesigning a local non-profit website." 
+                    icon={icons.html5} icon2={icons.css3} icon3={icons.js}>
+                  </PortfolioTile>
+                </PlanetTile>
+                <PlanetTile container={conPlanetAdjust[3]} planet={bobPlanetAdjust[3]} planetNumber={"planet-four"} animationNumber={"ani-four"} handleClick={this.handleClick} degree={this.state.degree === -270 ? "sphere-front" : ""}>
+                  <PortfolioTile 
+                    ref={this.portfolioLinkRef[3]}
+                    isMobile={this.state.isMobile} 
+                    class={isFrontTile.tileFour} 
+                    handleLink={isFrontTileLink.tileFour} 
+                    href="https://c-garza.github.io/Random-Quote-Generator/" 
+                    src="./images/random-quote-screenshot.png" 
+                    alt="Random Quote" 
+                    header="Random Quote" 
+                    caption="Using lukePeavey's Quotable API, this project displays a new random quote on click." 
+                    icon={icons.html5} icon2={icons.css3} icon3={icons.js}>
+                  </PortfolioTile>
+                </PlanetTile>
+              </div>
+              <div className="button-container">
+                <button id="prev" className="button button-choice" aria-label="Previous Project" onClick={(e) => {handleClick(e, "prev")}}><i className="fa fa-arrow-left" aria-hidden="true" onClick={(e) => {handleClick(e, "prev")}}></i></button>
+                <button id="next" className="button button-choice" aria-label="Next Project" onClick={(e) => {handleClick(e, "next")}}><i className="fa fa-arrow-right" aria-hidden="true" onClick={(e) => {handleClick(e, "next")}}></i></button>
+                <button className="button button-choice button-choice-info" style={{display: this.state.isMobile ? "block" : "none"}} onMouseDown={e => e.preventDefault()} onClick={this.handleFocus}><i className="fa fa-info" aria-hidden="true"></i></button>
+              </div>
+            </div>
           </div>
         </EventWrapper>
       </section>
@@ -1077,9 +1432,8 @@ class Contact extends Component {
             <h2 ref={this.contactHeaderRef}><span className={"contact-header-light " + toggleLight}>CONTACT</span></h2>
             <div className="contact-header">
               <h3>Feel free to get in touch.</h3>
-              <a href="mailto:christianga101@gmail.com"><p className={"contact-email " + (this.state.isOnScroll ? "animate-contact" : "")}>christianga101@gmail.com <i className={"fas fa-paper-plane " + (this.state.isOnScroll ? "animate-contact-plane" : "")}></i></p></a>
+              <a href="mailto:christianga101@gmail.com" aria-label="My E-mail address"><p className={"contact-email " + (this.state.isOnScroll ? "animate-contact" : "")}>christianga101@gmail.com <i className={"fas fa-paper-plane " + (this.state.isOnScroll ? "animate-contact-plane" : "")}></i></p></a>
             </div>
-            <small><a href="https://www.svgrepo.com/vectors/space-3/" target="_blank" rel="noopener noreferrer">SVG Earth, Sun, and ISS by svgrepo is licensed under CC By 4.0</a></small>
             <svg version="1.1" id="iss" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 59 59">
               <g>
                 <g>
