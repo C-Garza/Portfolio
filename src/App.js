@@ -420,7 +420,7 @@ class Nav extends Component {
             <li><a href="#contact" onClick={(e) => this.props.handleClick(e, this.props.contact.getBoundingClientRect().top, 850)}>Contact</a></li>
           </ul>
         )}
-        <div className="social-links">
+        <div className="social-links social-links-list">
           <div className="social-tab"><a href="https://github.com/C-Garza" target="_blank" rel="noopener noreferrer" aria-label="My Github Account"><i className="fab fa-github-square"></i></a></div>
           <div className="social-tab"><a href="https://www.linkedin.com/in/christian-garza-101/" target="_blank" rel="noopener noreferrer" aria-label="My LinkedIn Account"><i className="fab fa-linkedin"></i></a></div>
         </div>
@@ -1314,11 +1314,11 @@ class Portfolio extends Component {
                   isMobile={true} 
                   class={tilesAnimateClass} 
                   handleLink={true} 
-                  href="https://c-garza.github.io/Random-Quote-Generator/" 
-                  src="./images/random-quote-screenshot.png" 
-                  alt="Random Quote" 
-                  header="Random Quote" 
-                  caption="Using lukePeavey's Quotable API, this project displays a new random quote on click." 
+                  href="https://c-garza.github.io/HTML-CSS-JS-Practice/Pong%20Clone/index.html" 
+                  src="./images/pong-screenshot.png" 
+                  alt="Pong Clone" 
+                  header="Pong Clone" 
+                  caption="Created a Pong clone using HTML5 Canvas. Features include ability to play 1P vs Comp or 1P vs 2P and an in-game menu to change game variables." 
                   icon={icons.html5} 
                   icon2={icons.css3} 
                   icon3={icons.js} >
@@ -1375,11 +1375,11 @@ class Portfolio extends Component {
                     isMobile={this.state.isMobile} 
                     class={isFrontTile.tileFour} 
                     handleLink={isFrontTileLink.tileFour} 
-                    href="https://c-garza.github.io/Random-Quote-Generator/" 
-                    src="./images/random-quote-screenshot.png" 
-                    alt="Random Quote" 
-                    header="Random Quote" 
-                    caption="Using lukePeavey's Quotable API, this project displays a new random quote on click." 
+                    href="https://c-garza.github.io/HTML-CSS-JS-Practice/Pong%20Clone/index.html" 
+                    src="./images/pong-screenshot.png" 
+                    alt="Pong Clone" 
+                    header="Pong Clone" 
+                    caption="Created a Pong clone using HTML5 Canvas. Features include ability to play 1P vs Comp or 1P vs 2P and an in-game menu to change game variables." 
                     icon={icons.html5} icon2={icons.css3} icon3={icons.js}>
                   </PortfolioTile>
                 </PlanetTile>
