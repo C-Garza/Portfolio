@@ -740,6 +740,9 @@ nav .social-links.social-links-list {
   font-size: 7em;
   color: white;
 }
+.svg-icon {
+  width: 122px;
+}
 /*****PORTFOLIO*****/
 #portfolio {
   color: white;
@@ -943,7 +946,7 @@ nav .social-links.social-links-list {
 .carousel .planet-container:nth-child(1) .portfolio-tile-image {
   width: auto;
   height: 310px;
-  margin-top: -10px;
+  margin-top: 0px;
   margin-left: -155px;
 }
 .carousel .planet-container:nth-child(2) .portfolio-tile-image {
@@ -1044,6 +1047,10 @@ nav .social-links.social-links-list {
 .small-icon {
   font-size: 2.8em;
   color: white;
+}
+.svg-icon-small {
+  display: inline-block;
+  min-width: 38px;
 }
 .sphere-title:hover {
   background-color: #78909C;
@@ -1775,6 +1782,9 @@ nav .social-links.social-links-list {
   .icon {
     font-size: 6em;
   }
+  .svg-icon {
+    width: 106px;
+  }
   .contact-header p {
     width: 350px;
   }
@@ -1850,6 +1860,10 @@ nav .social-links.social-links-list {
   .about-tile:hover .about-tile-caption {
     visibility: visible;
     backface-visibility: visible;
+  }
+  .svg-icon {
+    width: 122px;
+    height: 122px;
   }
   .carousel-container {
     display: none;
@@ -1972,6 +1986,11 @@ nav .social-links.social-links-list {
   .small-icon {
     font-size: 3em;
     color: white;
+  }
+  .svg-icon-small {
+    display: inline-block;
+    max-width: 38px;
+    height: 38px;
   }
   .portfolio-tile:hover .portfolio-tile-overlay-header {
     transform: translateY(0%);
