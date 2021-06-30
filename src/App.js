@@ -1266,7 +1266,7 @@ class Portfolio extends Component {
     let toggleLight = this.state.hasLight ? "animate-sign" : "";
     let ie = window.navigator.userAgent.match(/(MSIE|Trident)/);
     let tilesAnimateClass = this.state.isOnScroll ? "portfolio-tile-animate " : "";
-    let icons = {html5: "devicon-html5-plain-wordmark", css3: "devicon-css3-plain-wordmark", js: "devicon-javascript-plain", jquery: "devicon-jquery-plain-wordmark", react: "devicon-react-original-wordmark"};
+    let icons = {html5: "devicon-html5-plain-wordmark", css3: "devicon-css3-plain-wordmark", js: "devicon-javascript-plain", jquery: "devicon-jquery-plain-wordmark", react: "devicon-react-original-wordmark", redux: "devicon-redux-original", node: "devicon-nodejs-plain-wordmark"};
     let transitionChangeSide = (this.state.degree === 0 || this.state.degree === -180 ? "transform 0.6s linear" : "transform 0.6s cubic-bezier(.73,0,1,1)");
     let transitionChangeFront = (this.state.degree === 0 || this.state.degree === -180 ? "transform 0.6s cubic-bezier(.73,0,1,1)" : "transform 0.6s linear");
     let conPlanetAdjust = [{transform: this.state.conFront, transition: transitionChangeFront}, {transform: this.state.conRight, transition: transitionChangeSide}, {transform: this.state.conBack, transition: transitionChangeFront}, {transform: this.state.conLeft, transition: transitionChangeSide}];
@@ -1302,7 +1302,7 @@ class Portfolio extends Component {
                   caption="A responsive SPA using a RESTful API to display pokemon data. Features include type filters, autocomplete serach, and stat charts." 
                   icon={icons.react} 
                   icon2={icons.css3} 
-                  svgIcon={true} >
+                  icon3={icons.redux} >
                 </PortfolioTile>
                 <PortfolioTile 
                   isMobile={true} 
@@ -1315,20 +1315,20 @@ class Portfolio extends Component {
                   caption="Using the MediaWiki API, this project provides a search interface for Wikipedia pages." 
                   icon={icons.html5} 
                   icon2={icons.css3} 
-                  icon3={icons.jquery} >
+                  icon3={icons.js}>
                 </PortfolioTile>
                 <PortfolioTile 
                   isMobile={true} 
                   class={tilesAnimateClass} 
                   handleLink={true} 
-                  href="https://latinobookfund.com/dev/" 
-                  src="./images/book-fund-screenshot.png" 
-                  alt="Latino Book Fund" 
-                  header="Latino Book Fund" 
-                  caption="Currently in the process of redesigning a local non-profit website." 
-                  icon={icons.html5} 
+                  href="https://garza-p2p-react.herokuapp.com/" 
+                  src="./images/og-p2p-react.png" 
+                  alt="P2P React" 
+                  header="P2P React" 
+                  caption="A video/text chat app using Node, React, Socket.IO, and PeerJS to wrap the WebRTC API." 
+                  icon={icons.react} 
                   icon2={icons.css3} 
-                  icon3={icons.js}>
+                  icon3={icons.node} >
                 </PortfolioTile>
                 <PortfolioTile 
                   isMobile={true} 
@@ -1358,7 +1358,7 @@ class Portfolio extends Component {
                     alt="Pokedex React" 
                     header="Pokedex React"
                     caption="A responsive SPA using a RESTful API to display pokemon data. Features include type filters, autocomplete serach, and stat charts." 
-                    icon={icons.react} icon2={icons.css3} svgIcon={true}>
+                    icon={icons.react} icon2={icons.css3} icon3={icons.redux}>
                   </PortfolioTile>
                 </PlanetTile>
                 <PlanetTile container={conPlanetAdjust[1]} planet={bobPlanetAdjust[1]} planetNumber={"planet-two"} animationNumber={"ani-two"} handleClick={this.handleClick} degree={this.state.degree === -90 ? "sphere-front" : ""}>
@@ -1367,12 +1367,12 @@ class Portfolio extends Component {
                     isMobile={this.state.isMobile} 
                     class={isFrontTile.tileTwo} 
                     handleLink={isFrontTileLink.tileTwo} 
-                    href="https://c-garza.github.io/Wiki-Viewer/" 
-                    src="./images/wiki-screenshot.png" 
-                    alt="Wikipedia Viewer" 
-                    header="Wikipedia Viewer" 
-                    caption="Using the MediaWiki API, this project provides a search interface for Wikipedia pages." 
-                    icon={icons.html5} icon2={icons.css3} icon3={icons.jquery}>
+                    href="https://garza-p2p-react.herokuapp.com/" 
+                    src="./images/og-p2p-react.png" 
+                    alt="P2P React" 
+                    header="P2P React" 
+                    caption="A video/text chat app using Node, React, Socket.IO, and PeerJS to wrap the WebRTC API." 
+                    icon={icons.react} icon2={icons.css3} icon3={icons.node}>
                   </PortfolioTile>
                 </PlanetTile> 
                 <PlanetTile container={conPlanetAdjust[2]} planet={bobPlanetAdjust[2]} planetNumber={"planet-three"} animationNumber={"ani-three"} handleClick={this.handleClick} degree={this.state.degree === -180 ? "sphere-front" : ""}>
@@ -1381,12 +1381,12 @@ class Portfolio extends Component {
                     isMobile={this.state.isMobile} 
                     class={isFrontTile.tileThree} 
                     handleLink={isFrontTileLink.tileThree} 
-                    href="https://latinobookfund.com/dev/" 
-                    src="./images/book-fund-screenshot.png" 
-                    alt="Latino Book Fund" 
-                    header="Latino Book Fund" 
-                    caption="Currently in the process of redesigning a local non-profit website." 
-                    icon={icons.html5} icon2={icons.css3} icon3={icons.js}>
+                    href="https://c-garza.github.io/Wiki-Viewer/" 
+                    src="./images/wiki-screenshot.png" 
+                    alt="Wikipedia Viewer" 
+                    header="Wikipedia Viewer" 
+                    caption="Using the MediaWiki API, this project provides a search interface for Wikipedia pages." 
+                    icon={icons.html5} icon2={icons.css3} icon3={icons.jquery}>
                   </PortfolioTile>
                 </PlanetTile>
                 <PlanetTile container={conPlanetAdjust[3]} planet={bobPlanetAdjust[3]} planetNumber={"planet-four"} animationNumber={"ani-four"} handleClick={this.handleClick} degree={this.state.degree === -270 ? "sphere-front" : ""}>
