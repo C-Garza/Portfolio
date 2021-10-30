@@ -812,6 +812,7 @@ nav .social-links.social-links-list {
   transition: transform 1s linear;
 }
 .planet-container {
+  height: 1px;
   transition: transform 1s cubic-bezier(.73,0,1,.83);
 }
 /***HANDLE X-AXIS TRANSLATION***/
@@ -953,6 +954,9 @@ nav .social-links.social-links-list {
   width: auto;
   height: 350px;
   margin-left: -185px;
+}
+.carousel .planet-container:nth-child(2) .portfolio-tile-image-foreground {
+  height: 350px;
 }
 .carousel .planet-container:nth-child(3) .portfolio-tile-image {
   width: auto;

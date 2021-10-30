@@ -924,8 +924,10 @@ class About extends Component {
           <i className="about-tech-icon devicon-html5-plain-wordmark icon"></i>
           <i className="about-tech-icon devicon-css3-plain-wordmark icon"></i>
           <i className="about-tech-icon devicon-sass-original icon"></i>
+          <i className="about-tech-icon devicon-nodejs-plain-wordmark icon"></i>
           <i className="about-tech-icon devicon-jquery-plain-wordmark icon"></i>
           <i className="about-tech-icon devicon-javascript-plain icon"></i>
+          <i className="about-tech-icon devicon-typescript-plain icon"></i>
         </div>
       </EventWrapper>
       </section>
