@@ -357,7 +357,7 @@ class Header extends Component {
         <TechLines bottomPage={this.props.bottomPage} updateDash={this.props.updateDash} updateDashY={this.props.updateDashY} width={this.props.width} />
         <div className="header-container">
           <h1>Christian Garza</h1>
-          <h2>Hello, I'm a Front-End Developer who is always looking to learn and improve. Feel free to<br/>learn more below.</h2>
+          <h2>Hello, I'm a Full-Stack Developer who is always looking to learn and improve. Feel free to<br/>learn more below.</h2>
           <div className="next-section" onClick={(e) => this.handleClick(e, this.props.about.getBoundingClientRect().top - 60, 850)}><i className="fas fa-chevron-down"></i></div>
         </div>
       </header>
@@ -872,7 +872,7 @@ class About extends Component {
             <img src={require("./images/christian-garza.jpg")} alt="Christian Garza" />
           </div>
           <div className={"about-picture-caption " + (this.state.isOnScroll ? "about-picture-animation" : "")}>
-            <h3>I'm a Front-End Developer who aims to build fully responsive layouts and keeping users engaged 
+            <h3>I'm a Full-Stack Developer who aims to build fully responsive layouts and keeping users engaged 
               through animation and designs, all while maintaining best practices in code.</h3>
           </div>
         </div>
@@ -880,7 +880,7 @@ class About extends Component {
           {this.state.mobileHex ? (
             <div className={"hexagons " + (this.state.isOnScrollTiles ? "toggleAnimation" : "hideClass")}>
               <div className="single-hex">
-                <AboutTile {...tileProps} icon="fas fa-laptop-code" header="Web Development" caption="Skillset specifically tailored for front-end proficiency."></AboutTile>
+                <AboutTile {...tileProps} icon="fas fa-laptop-code" header="Web Development" caption="Skillset specifically tailored for full-stack proficiency."></AboutTile>
               </div>
               <div className="single-hex">
                 <AboutTile {...tileProps} icon="fas fa-desktop" icon2="fas fa-mobile-alt fa-small" header="Responsive Layouts" caption="Strives to make layouts work on any device a top priority."></AboutTile>
@@ -904,7 +904,7 @@ class About extends Component {
               <AboutTile {...tileProps} activeHex={true}></AboutTile>
             </div>
             <div className="odd-row-hex">
-              <AboutTile {...tileProps} icon="fas fa-laptop-code" header="Web Development" caption="Skillset specifically tailored for front-end proficiency."></AboutTile>
+              <AboutTile {...tileProps} icon="fas fa-laptop-code" header="Web Development" caption="Skillset specifically tailored for full-stack proficiency."></AboutTile>
               <AboutTile {...tileProps} icon="fas fa-globe-americas" header="Passionately Curious" caption="Enjoys learning how and why things work. Always questioning."></AboutTile>
               <AboutTile {...tileProps} activeHex={true}></AboutTile>
             </div>
@@ -928,6 +928,7 @@ class About extends Component {
           <i className="about-tech-icon devicon-jquery-plain-wordmark icon"></i>
           <i className="about-tech-icon devicon-javascript-plain icon"></i>
           <i className="about-tech-icon devicon-typescript-plain icon"></i>
+          <i class="about-tech-icon devicon-graphql-plain icon"></i>
         </div>
       </EventWrapper>
       </section>
@@ -1323,7 +1324,7 @@ class Portfolio extends Component {
                   isMobile={true} 
                   class={tilesAnimateClass} 
                   handleLink={true} 
-                  href="https://garza-p2p-react.herokuapp.com/" 
+                  href="https://garza-p2p-react-bbfbde0ab2ce.herokuapp.com/" 
                   src="./images/og-p2p-react.png" 
                   alt="P2P React" 
                   header="P2P React" 
@@ -1369,7 +1370,7 @@ class Portfolio extends Component {
                     isMobile={this.state.isMobile} 
                     class={isFrontTile.tileTwo} 
                     handleLink={isFrontTileLink.tileTwo} 
-                    href="https://garza-p2p-react.herokuapp.com/" 
+                    href="https://garza-p2p-react-bbfbde0ab2ce.herokuapp.com/" 
                     src="./images/og-p2p-react.png" 
                     alt="P2P React" 
                     header="P2P React" 
